@@ -1,0 +1,183 @@
+Project #3 - Due Monday-October 29, 23:59:59pm
+============================================
+
+Xelkalai's new travel agency has required him to stay on his home
+world.  This has prevented him from accessing some of his favorite
+Earth-based web sites.  Earth has a global firewall and doesn't
+want to share its content due to concerns over non-compliant
+worlds with respect to copyrights.
+
+Xelkalai has been informed of the nature of JavaScript and its ability
+to run on the server (via nodejs).  He wants you to write a proxy web
+server to handle his most pressing needs.
+
+You've been contracted to write Xelkalai's proxy server software, Xeloxy
+(aka Xelkalai Proxy).
+
+Xeloxy should take URLs via the HTTP service.  Xelkalai wants you
+to accept (3) different types of requests:  
+	Dilbert comic retriever
+	web search
+	Personal file server
+
+Xeloxy requirements:
+=====================
+0) The service must be written in JavaScript executed by the nodejs
+   interpreter.
+1) Your JavaScript can use the modules included in the basic nodejs 
+   system.
+2) You cannot use any external modules.  You cannot install any extra 
+   modules.  The server shall be completed with the modules listed 
+   in the requirements.
+3) Your server shall execute and run properly on the CS.UKY.EDU systems.
+4) Your server shall output (via console.log()) every URL requested 
+   and the word " VALID" or " BAD" afterwards
+5) Your server shall accept valid HTTP requests via URLs in the following
+   format (all other URLs shall be considered bad):
+
+   /COMIC/([0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]|CURRENT)
+
+   or
+
+   /SEARCH/[a-zA-Z0-9]+
+
+   or
+
+   /MYFILE/[a-zA-Z0-9_]+.html
+
+   [NOTE: these are NOT complete solutions to the reg. expressions]
+
+   Valid examples:
+
+       /COMIC/2018-10-10 { would return the Dilbert web page for that 
+	                       date }
+
+       /COMIC/CURRENT    { would return the latest Dilbert web page }
+
+       /SEARCH/purple    { would return the duckduckgo.com search
+	                       results for the search term "purple" }
+
+       /MYFILE/mytrip.html { would return the file mytrip.html }
+
+       /MYFILE/resume.html { would return the file resume.html }
+
+   Invalid examples:
+        /../somefile.html
+        /SEARCH/somefile.html
+        /COMIC/misc
+        /MYFILE/extra/myresume.html
+		/MYFILE/1234
+
+
+    Your program will return (to the requesting client) one of the 
+	four following things:
+
+    1&2) for COMIC and SEARCH read the appropriate web page and
+	   return via the established connection.
+    3) the file they asked for 
+    4) an appropriate error message
+
+
+STEPS:
+
+    1) call http.createServer(serveURL)
+       serveURL() is a function that you shall write to process
+       requests from the user via their browser/client.
+    2) serveURL() will do the following 3 things:
+           1) output to the console the URL requested and the
+		      " VALID" or " BAD" phrase based on #2 below.
+           2) use a regular expression to make sure the URL
+              is in the correct form as noted above.  Note that
+              the examples and notation above are not complete,
+              they still allow impermissible URLs.  You need to
+              complete them.
+
+           3) call (3) separate functions, that you shall write.
+
+              giveComic() - your server shall parse the number
+              requested, or "CURRENT" and build the required
+			  URL:
+			  http://dilbert.com        (for CURRENT)
+			  -or-
+			  http://dilbert.com/strip/2018-10-10   
+			                             (for the comic ####-##-##)
+
+              doSearch() - your search shall parse the 
+			  sent URL for the search term and build the 
+			  required URL for duckduckgo.com:
+
+			  https://duckduckgo.com/html/?q=SEARCHTERM&ia=web
+
+              giveFile() - your server shall attempt to open the
+              file requested.  If it exists, and you can read it,
+              then the contents shall be returned as a response
+              to the client.  Nothing from the file should be
+              changed.  Only files stored in the directory
+              "private_html" shall be served.  Note that the
+              path "private_html" shall NOT be part of the URL,
+              it is assumed and used for security purposes.
+
+              If the file does not exist, return a 403 error code 
+              and an appropriate error text.
+
+      REQUIRED: your program MUST use fs.readFile(), it MUST NOT
+      use fs.readFileSync() !
+
+	  REQUIRED: your program MUST use exec() and call the "curl"
+	  program.  The environment variable PATH must be set
+	  to "/usr/bin" only, for security reasons.
+
+    3) The http object requires a call to the listen() method.  Your
+       program shall call this with at least one option, a port number.
+       The port number shall be a random number between 
+       LOWERPORT and UPPERPORT inclusive.  
+
+       Your program shall output to the console, the URL used, including
+       port, like this: 
+       "Server started. Listing on http://localhost:7876"
+
+       LOWERPORT and UPPERPORT will be defined constants at the top
+       of your program.  You should use them as 2000 and 35000.
+       I will change them as a test.  What happens when I set them
+       both to 8888 ?   Your program shall work correctly.
+
+
+=====================================================================
+
+JavaScript methods you may need:
+
+    http:
+        createServer()
+        listen()
+
+    fs:
+        existsSync() - check to see if a file exists
+        readFile()   - asyncronously read a file
+
+    child_process:
+        exec() - executes a command and produces output (and error)
+        
+    match()          - match a string with a regular expression
+    -or-
+    test()           - checks a string against a regular expression
+
+    Math:
+        floor()
+        random()
+    
+
+Xelkalai's Contract Requirements:
+====================================
+0) You shall submit your JavaScript file to Canvas named as 
+   "P3_Lastname_p3.js", or "P3_Lastname1Lastname2.js" if you
+   work in a team.
+1) You shall properly comment your code including putting your
+   name(s) at the top.
+2) You shall follow Dr. Finkel's checklist for good programming:
+   http://www.cs.uky.edu/~raphael/checklist.html
+3) Your server shall work with all clients, such as curl/wget!
+
+Teams:
+
+You have the option of working in teams of 2.  Each team member must
+contribute equally to the project.
